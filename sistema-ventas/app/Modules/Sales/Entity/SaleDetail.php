@@ -5,9 +5,9 @@ namespace App\Modules\Sales\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class Sale extends Model
+class SaleDetail extends Model
 {
-    protected $table = 'sales';
+    protected $table = 'sale_details';
 
     protected $primaryKey = 'id';
 
@@ -16,14 +16,13 @@ class Sale extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'sale_date',
-        'total_amount',
-        'sale_status_id',
+        'sale_id',
+        'product_id',
+        'quantity',
+        'unit_price',
+        'subtotal',
     ];
 
-    /**
-     * Generar UUID automáticamente (Laravel 7)
-     */
     protected static function boot()
     {
         parent::boot();
@@ -35,13 +34,8 @@ class Sale extends Model
         });
     }
 
-    public function saleStatus()
+    public function sale()
     {
-        return $this->belongsTo(SaleStatus::class, 'sale_status_id');
-    }
-
-    public function saleDetails()
-    {
-        return $this->hasMany(SaleDetail::class, 'sale_id');
+        return $this->belongsTo(Sale::class, 'sale_id');
     }
 }

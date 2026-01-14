@@ -1,0 +1,1453 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API de Sistema de Ventas",
+        "description": "Documentación de la API para el sistema de ventas",
+        "contact": {
+            "email": "support@example.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Servidor de la API"
+        }
+    ],
+    "paths": {
+        "/api": {},
+        "/api/product-categories": {
+            "get": {
+                "tags": [
+                    "ProductCategories"
+                ],
+                "summary": "Obtener todas las categorías de productos",
+                "description": "Devuelve una lista de todas las categorías de productos registradas en el sistema",
+                "operationId": "getAllProductCategories",
+                "responses": {
+                    "200": {
+                        "description": "Lista de categorías de productos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "format": "uuid",
+                                                "example": "550e8400-e29b-41d4-a716-446655440000"
+                                            },
+                                            "code": {
+                                                "type": "string",
+                                                "example": "CAT001"
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Electrónicos"
+                                            },
+                                            "description": {
+                                                "type": "string",
+                                                "example": "Descripción de la categoría"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "ProductCategories"
+                ],
+                "summary": "Crear una nueva categoría de producto",
+                "description": "Crea una nueva categoría de producto en el sistema",
+                "operationId": "createProductCategory",
+                "requestBody": {
+                    "description": "Datos de la categoría de producto a crear",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "code",
+                                    "name"
+                                ],
+                                "properties": {
+                                    "code": {
+                                        "type": "string",
+                                        "example": "CAT001"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Electrónicos"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Descripción de la categoría"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Categoría de producto creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "product_category": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid",
+                                                    "example": "550e8400-e29b-41d4-a716-446655440006"
+                                                },
+                                                "code": {
+                                                    "type": "string",
+                                                    "example": "CAT001"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Electrónicos"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Descripción de la categoría"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Categoría de producto creada exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "El código de la categoría no puede estar vacío."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Error al crear la categoría de producto"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/product-categories/{productCategoryId}": {
+            "get": {
+                "tags": [
+                    "ProductCategories"
+                ],
+                "summary": "Obtener una categoría de producto por ID",
+                "description": "Devuelve la información de una categoría de producto específica",
+                "operationId": "getProductCategoryById",
+                "parameters": [
+                    {
+                        "name": "productCategoryId",
+                        "in": "path",
+                        "description": "ID de la categoría de producto",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Información de la categoría de producto",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                                        },
+                                        "code": {
+                                            "type": "string",
+                                            "example": "CAT001"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Electrónicos"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "example": "Descripción de la categoría"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Categoría de producto no encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Categoría de producto no encontrada"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "ProductCategories"
+                ],
+                "summary": "Actualizar una categoría de producto",
+                "description": "Actualiza una categoría de producto existente en el sistema",
+                "operationId": "updateProductCategory",
+                "parameters": [
+                    {
+                        "name": "productCategoryId",
+                        "in": "path",
+                        "description": "ID de la categoría de producto",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Datos de la categoría de producto a actualizar",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Updated Electronics"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Updated category description"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Categoría de producto actualizada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Categoría de producto actualizada exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "El nombre de la categoría no puede estar vacío."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Categoría de producto no encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Categoría de producto no encontrada"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Error al actualizar la categoría de producto"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "ProductCategories"
+                ],
+                "summary": "Eliminar una categoría de producto",
+                "description": "Elimina una categoría de producto del sistema",
+                "operationId": "deleteProductCategory",
+                "parameters": [
+                    {
+                        "name": "productCategoryId",
+                        "in": "path",
+                        "description": "ID de la categoría de producto",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Categoría de producto eliminada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Categoría de producto eliminada exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Categoría de producto no encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Categoría de producto no encontrada"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflicto al eliminar la categoría",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "No se puede eliminar la categoría porque está asociada a productos"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/products": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Obtener todos los productos",
+                "description": "Devuelve una lista de todos los productos registrados en el sistema",
+                "operationId": "getAllProducts",
+                "responses": {
+                    "200": {
+                        "description": "Lista de productos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "format": "uuid",
+                                                "example": "550e8400-e29b-41d4-a716-446655440000"
+                                            },
+                                            "code": {
+                                                "type": "string",
+                                                "example": "PROD001"
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Producto de ejemplo"
+                                            },
+                                            "description": {
+                                                "type": "string",
+                                                "example": "Descripción del producto"
+                                            },
+                                            "price": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 10.99
+                                            },
+                                            "stock": {
+                                                "type": "integer",
+                                                "example": 100
+                                            },
+                                            "product_category_id": {
+                                                "type": "string",
+                                                "format": "uuid",
+                                                "example": "550e8400-e29b-41d4-a716-446655440000"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Crear un nuevo producto",
+                "description": "Crea un nuevo producto en el sistema",
+                "operationId": "createProduct",
+                "requestBody": {
+                    "description": "Datos del producto a crear",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "code",
+                                    "name",
+                                    "price",
+                                    "stock",
+                                    "product_category_id"
+                                ],
+                                "properties": {
+                                    "code": {
+                                        "type": "string",
+                                        "example": "PROD001"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Producto de ejemplo"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Descripción del producto"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 10.99
+                                    },
+                                    "stock": {
+                                        "type": "integer",
+                                        "example": 100
+                                    },
+                                    "product_category_id": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "example": "550e8400-e29b-41d4-a716-446655440001"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Producto creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "product": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid",
+                                                    "example": "550e8400-e29b-41d4-a716-446655440006"
+                                                },
+                                                "code": {
+                                                    "type": "string",
+                                                    "example": "PROD001"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Producto de ejemplo"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Descripción del producto"
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 10.99
+                                                },
+                                                "stock": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "product_category_id": {
+                                                    "type": "string",
+                                                    "format": "uuid",
+                                                    "example": "550e8400-e29b-41d4-a716-446655440001"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Producto creado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "El código del producto no puede estar vacío."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Error al crear el producto"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/products/{productId}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Obtener un producto por ID",
+                "description": "Devuelve la información de un producto específico",
+                "operationId": "getProductById",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "description": "ID del producto",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Información del producto",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                                        },
+                                        "code": {
+                                            "type": "string",
+                                            "example": "PROD001"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Producto de ejemplo"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "example": "Descripción del producto"
+                                        },
+                                        "price": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 10.99
+                                        },
+                                        "stock": {
+                                            "type": "integer",
+                                            "example": 100
+                                        },
+                                        "product_category_id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Producto no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Producto no encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Actualizar un producto",
+                "description": "Actualiza un producto existente en el sistema",
+                "operationId": "updateProduct",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "description": "ID del producto",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Datos del producto a actualizar",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "price",
+                                    "stock",
+                                    "product_category_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Updated Smartphone"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Updated smartphone description"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 649.99
+                                    },
+                                    "stock": {
+                                        "type": "integer",
+                                        "example": 20
+                                    },
+                                    "product_category_id": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "example": "550e8400-e29b-41d4-a716-446655440001"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Producto actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Producto actualizado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "El nombre del producto no puede estar vacío."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Producto no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Producto no encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Error al actualizar el producto"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Eliminar un producto",
+                "description": "Elimina un producto del sistema",
+                "operationId": "deleteProduct",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "description": "ID del producto",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Producto eliminado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Producto eliminado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Producto no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Producto no encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/products/category/{productCategoryId}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Obtener productos por categoría",
+                "description": "Devuelve una lista de productos que pertenecen a una categoría específica",
+                "operationId": "getProductsByCategory",
+                "parameters": [
+                    {
+                        "name": "productCategoryId",
+                        "in": "path",
+                        "description": "ID de la categoría de productos",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de productos de la categoría",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "format": "uuid",
+                                                "example": "550e8400-e29b-41d4-a716-446655440000"
+                                            },
+                                            "code": {
+                                                "type": "string",
+                                                "example": "PROD001"
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Producto de ejemplo"
+                                            },
+                                            "description": {
+                                                "type": "string",
+                                                "example": "Descripción del producto"
+                                            },
+                                            "price": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 10.99
+                                            },
+                                            "stock": {
+                                                "type": "integer",
+                                                "example": 100
+                                            },
+                                            "product_category_id": {
+                                                "type": "string",
+                                                "format": "uuid",
+                                                "example": "550e8400-e29b-41d4-a716-446655440000"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sales": {
+            "get": {
+                "tags": [
+                    "Sales"
+                ],
+                "summary": "Obtener todas las ventas",
+                "description": "Devuelve una lista de todas las ventas registradas en el sistema",
+                "operationId": "getAllSales",
+                "responses": {
+                    "200": {
+                        "description": "Lista de ventas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "format": "uuid",
+                                                "example": "550e8400-e29b-41d4-a716-446655440000"
+                                            },
+                                            "sale_date": {
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2024-01-14"
+                                            },
+                                            "sale_details": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "product_id": {
+                                                            "type": "string",
+                                                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                                                        },
+                                                        "quantity": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        },
+                                                        "unit_price": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 100.5
+                                                        },
+                                                        "subtotal": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 201
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Sales"
+                ],
+                "summary": "Crear una nueva venta",
+                "description": "Crea una nueva venta en el sistema",
+                "operationId": "createSale",
+                "requestBody": {
+                    "description": "Datos de la venta a crear",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "sale_date",
+                                    "sale_details"
+                                ],
+                                "properties": {
+                                    "sale_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-01-14"
+                                    },
+                                    "sale_details": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "product_id": {
+                                                    "type": "string",
+                                                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "unit_price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 100.5
+                                                },
+                                                "subtotal": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 201
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Venta creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "sale": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid",
+                                                    "example": "550e8400-e29b-41d4-a716-446655440006"
+                                                },
+                                                "sale_date": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2024-01-14"
+                                                },
+                                                "sale_details": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "product_id": {
+                                                                "type": "string",
+                                                                "example": "550e8400-e29b-41d4-a716-446655440000"
+                                                            },
+                                                            "quantity": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "unit_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 100.5
+                                                            },
+                                                            "subtotal": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 201
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Venta creada exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "El campo sale_date es obligatorio."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Error al crear la venta"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sales/{saleId}": {
+            "get": {
+                "tags": [
+                    "Sales"
+                ],
+                "summary": "Obtener una venta por ID",
+                "description": "Devuelve la información de una venta específica",
+                "operationId": "getSaleById",
+                "parameters": [
+                    {
+                        "name": "saleId",
+                        "in": "path",
+                        "description": "ID de la venta",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Información de la venta",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                                        },
+                                        "sale_date": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2024-01-14"
+                                        },
+                                        "sale_details": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "product_id": {
+                                                        "type": "string",
+                                                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                                                    },
+                                                    "quantity": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "unit_price": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 100.5
+                                                    },
+                                                    "subtotal": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 201
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Venta no encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Venta no encontrada"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Sales"
+                ],
+                "summary": "Actualizar estado de una venta",
+                "description": "Actualiza el estado de una venta existente en el sistema",
+                "operationId": "updateSale",
+                "parameters": [
+                    {
+                        "name": "saleId",
+                        "in": "path",
+                        "description": "ID de la venta",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Datos del estado de la venta a actualizar",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "sale_status_id"
+                                ],
+                                "properties": {
+                                    "sale_status_id": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Venta actualizada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Venta actualizada exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "El campo sale_status_id es obligatorio."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Venta no encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Venta no encontrada"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Error al actualizar la venta"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Sales"
+                ],
+                "summary": "Eliminar una venta",
+                "description": "Elimina una venta del sistema",
+                "operationId": "deleteSale",
+                "parameters": [
+                    {
+                        "name": "saleId",
+                        "in": "path",
+                        "description": "ID de la venta",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Venta eliminada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Venta eliminada exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Venta no encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Venta no encontrada"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Error al eliminar la venta"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "ProductCategories",
+            "description": "ProductCategories"
+        },
+        {
+            "name": "Products",
+            "description": "Products"
+        },
+        {
+            "name": "Sales",
+            "description": "Sales"
+        }
+    ]
+}
