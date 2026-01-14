@@ -1,0 +1,18 @@
+@startuml
+title Sistema de Ventas – Sequence Diagram (Create Sale)
+
+actor Cliente
+
+participant "Product Management\n(Product)" as Product
+participant "Sale Management\n(Sale)" as Sale
+
+Cliente -> Product : Consultar productos disponibles
+Product --> Cliente : Lista de productos
+
+Cliente -> Sale : Solicitar creación de venta
+Sale -> Product : Verificar producto y precio
+Product --> Sale : Producto válido
+
+Sale --> Cliente : Venta creada
+
+@enduml

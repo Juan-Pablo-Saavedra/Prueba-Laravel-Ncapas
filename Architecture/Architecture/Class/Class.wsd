@@ -1,0 +1,42 @@
+@startuml
+title Sistema de Ventas – Class Diagram (IDs only)
+
+' =========================
+' PRODUCT MANAGEMENT
+' =========================
+class product_category {
+  + id
+}
+
+class product {
+  + id
+  + product_category_id
+}
+
+' =========================
+' SALE MANAGEMENT
+' =========================
+class sale_status {
+  + id
+}
+
+class sale {
+  + id
+  + sale_status_id
+}
+
+class sale_detail {
+  + id
+  + sale_id
+  + product_id
+}
+
+' =========================
+' RELATIONSHIPS
+' =========================
+product "many" o-- "1" product_category
+sale "many" o-- "1" sale_status
+sale "1" o-- "many" sale_detail
+sale_detail "many" o-- "1" product
+
+@enduml

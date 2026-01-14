@@ -1,0 +1,15 @@
+@startuml
+title Sistema de Ventas – Package Diagram
+
+package "Product Management" {
+  class product
+  class product_category
+}
+
+package "Sale Management" {
+  class sale
+  class sale_detail
+  class sale_status
+}
+
+@enduml

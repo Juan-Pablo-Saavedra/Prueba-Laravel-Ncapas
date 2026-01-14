@@ -1,0 +1,41 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor White
+  BorderColor #1f2937
+  ArrowColor #4b5563
+}
+skinparam ActorStyle awesome
+
+title Sistema de Ventas – Use Case Diagram
+
+actor "Cliente" as Cliente
+actor "Empleado" as Empleado
+actor "Administrador" as Admin
+
+package "Product Management" {
+  (Ver productos) as UC_ViewProducts
+  (Registrar producto) as UC_AddProduct
+  (Actualizar producto) as UC_UpdateProduct
+}
+
+package "Sale Management" {
+  (Crear venta) as UC_CreateSale
+  (Ver ventas) as UC_ViewSales
+  (Anular venta) as UC_CancelSale
+}
+
+' Relaciones de actores
+Cliente --> UC_ViewProducts
+Cliente --> UC_CreateSale
+
+Empleado --> UC_ViewProducts
+Empleado --> UC_ViewSales
+
+Admin --> UC_AddProduct
+Admin --> UC_UpdateProduct
+Admin --> UC_ViewSales
+Admin --> UC_CancelSale
+
+@enduml
