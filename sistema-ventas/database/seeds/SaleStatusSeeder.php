@@ -1,41 +1,29 @@
 <?php
 
-namespace Database\Seeders;
-
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
-use App\Modules\Sales\Entity\SaleStatus;
+use Illuminate\Support\Facades\DB;
 
 class SaleStatusSeeder extends Seeder
 {
-    public function run(): void
+    public function run()
     {
-        $statuses = [
+        DB::table('sale_statuses')->insert([
             [
-                'id' => Str::uuid(),
+                'id' => '550e8400-e29b-41d4-a716-446655440003',
                 'code' => 'PENDING',
-                'name' => 'Pendiente',
-                'description' => 'Venta creada, pendiente de procesamiento',
+                'name' => 'Pending',
+                'description' => 'Sale is pending',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'id' => Str::uuid(),
-                'code' => 'PAID',
-                'name' => 'Pagada',
-                'description' => 'Venta pagada',
+                'id' => '550e8400-e29b-41d4-a716-446655440004',
+                'code' => 'COMPLETED',
+                'name' => 'Completed',
+                'description' => 'Sale is completed',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
-            [
-                'id' => Str::uuid(),
-                'code' => 'CANCELLED',
-                'name' => 'Cancelada',
-                'description' => 'Venta cancelada',
-            ],
-        ];
-
-        foreach ($statuses as $status) {
-            SaleStatus::updateOrCreate(
-                ['code' => $status['code']],
-                $status
-            );
-        }
+        ]);
     }
 }

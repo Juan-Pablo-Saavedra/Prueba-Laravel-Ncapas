@@ -8,185 +8,167 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
+use OpenApi\Annotations as OA;
 
-/**
- * Controlador para la gestión de ventas.
- *
- * Este controlador maneja las operaciones CRUD para las ventas,
- * incluyendo la creación, lectura, actualización y eliminación de ventas.
- */
 
-/**
- * Clase SaleController
- *
- * Controlador para gestionar las solicitudes relacionadas con ventas.
- * Implementa el patrón de controlador para manejar las peticiones HTTP.
- *
- * @package App\Modules\Sales\Controller
- */
+
 class SaleController
 {
-    /**
-     * @var SaleService
-     */
-    private $saleService;
+    private SaleService $saleService;
 
-    /**
-     * Constructor de SaleController.
-     *
-     * @param SaleService $saleService
-     */
     public function __construct(SaleService $saleService)
     {
         $this->saleService = $saleService;
     }
 
     /**
-     * Crea una nueva venta.
-     *
-     * Este endpoint permite la creación de una nueva venta en el sistema.
-     * Se validan los datos de entrada y se devuelve una respuesta con la venta creada.
-     *
      * @OA\Post(
-     *     path="/api/sales",
-     *     tags={"Sales"},
-     *     summary="Crear una nueva venta",
-     *     description="Crea una nueva venta en el sistema",
+     *     path="/sales",
+     *     summary="Create a new sale",
+     *     description="Create a new sale with the provided details",
      *     operationId="createSale",
+     *     tags={"Sales"},
      *     @OA\RequestBody(
      *         required=true,
-     *         description="Datos de la venta a crear",
+     *         description="Sale data",
      *         @OA\JsonContent(
      *             required={"sale_date", "sale_details"},
      *             @OA\Property(property="sale_date", type="string", format="date", example="2024-01-14"),
-     *             @OA\Property(property="sale_details", type="array",
+     *             @OA\Property(
+     *                 property="sale_details",
+     *                 type="array",
      *                 @OA\Items(
-     *                     @OA\Property(property="product_id", type="string", example="550e8400-e29b-41d4-a716-446655440000"),
+     *                     required={"product_id", "quantity", "unit_price", "subtotal"},
+     *                     @OA\Property(property="product_id", type="string", format="uuid", example="123e4567-e89b-12d3-a456-426614174000"),
      *                     @OA\Property(property="quantity", type="integer", example=2),
-     *                     @OA\Property(property="unit_price", type="number", format="float", example=100.50),
-     *                     @OA\Property(property="subtotal", type="number", format="float", example=201.00)
+     *                     @OA\Property(property="unit_price", type="number", format="float", example=10.99),
+     *                     @OA\Property(property="subtotal", type="number", format="float", example=21.98)
      *                 )
      *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Venta creada exitosamente",
+     *         description="Sale created successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(property="sale", type="object",
-     *                 @OA\Property(property="id", type="string", format="uuid", example="550e8400-e29b-41d4-a716-446655440006"),
-     *                 @OA\Property(property="sale_date", type="string", format="date", example="2024-01-14"),
-     *                 @OA\Property(property="sale_details", type="array",
-     *                     @OA\Items(
-     *                         @OA\Property(property="product_id", type="string", example="550e8400-e29b-41d4-a716-446655440000"),
-     *                         @OA\Property(property="quantity", type="integer", example=2),
-     *                         @OA\Property(property="unit_price", type="number", format="float", example=100.50),
-     *                         @OA\Property(property="subtotal", type="number", format="float", example=201.00)
-     *                     )
+     *             type="object",
+     *             @OA\Property(property="id", type="string", format="uuid"),
+     *             @OA\Property(property="sale_date", type="string", format="date"),
+     *             @OA\Property(property="total_amount", type="number", format="float"),
+     *             @OA\Property(property="sale_status_id", type="string", format="uuid"),
+     *             @OA\Property(
+     *                 property="sale_details",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="product_id", type="string", format="uuid"),
+     *                     @OA\Property(property="quantity", type="integer"),
+     *                     @OA\Property(property="unit_price", type="number", format="float"),
+     *                     @OA\Property(property="subtotal", type="number", format="float")
      *                 )
-     *             ),
-     *             @OA\Property(property="message", type="string", example="Venta creada exitosamente")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="errors", type="object")
      *         )
      *     ),
      *     @OA\Response(
      *         response=400,
-     *         description="Error de validación",
+     *         description="Domain error",
      *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string", example="El campo sale_date es obligatorio.")
+     *             @OA\Property(property="error", type="string")
      *         )
      *     ),
      *     @OA\Response(
      *         response=500,
-     *         description="Error interno del servidor",
+     *         description="Internal server error",
      *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string", example="Error al crear la venta")
+     *             @OA\Property(property="error", type="string")
      *         )
      *     )
      * )
-     *
-     * @param Request $request La solicitud HTTP que contiene los datos de la venta.
-     * @return JsonResponse La respuesta JSON con la venta creada o un mensaje de error.
      */
     public function createSale(Request $request): JsonResponse
     {
         try {
-            $validatedData = $request->validate([
+            $validated = $request->validate([
                 'sale_date' => 'required|date',
                 'sale_details' => 'required|array|min:1',
-                'sale_details.*.product_id' => 'required|string',
+                'sale_details.*.product_id' => 'required|uuid',
                 'sale_details.*.quantity' => 'required|integer|min:1',
                 'sale_details.*.unit_price' => 'required|numeric|min:0.01',
                 'sale_details.*.subtotal' => 'required|numeric|min:0.01',
             ]);
 
-            $createSaleDTO = new CreateSaleDTO(
-                $validatedData['sale_date'],
-                $validatedData['sale_details']
+            $dto = new CreateSaleDTO(
+                $validated['sale_date'],
+                $validated['sale_details']
             );
 
-            $result = $this->saleService->createSale($createSaleDTO);
+            $result = $this->saleService->createSale($dto);
 
             return response()->json($result, 201);
 
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->errors()], 422);
-        } catch (\Exception $e) {
-            Log::error('Error al crear la venta: ' . $e->getMessage());
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json(['errors' => $e->errors()], 422);
+
+        } catch (\DomainException $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+
+        } catch (\Throwable $e) {
+            Log::error('Create sale error', ['exception' => $e]);
+            return response()->json(['error' => 'Error interno al crear la venta'], 500);
         }
     }
 
     /**
-     * Obtiene una venta por su ID.
-     *
-     * Este endpoint devuelve la información de una venta específica según su ID.
-     * Si la venta no existe, se devuelve un mensaje de error.
-     *
      * @OA\Get(
-     *     path="/api/sales/{saleId}",
-     *     tags={"Sales"},
-     *     summary="Obtener una venta por ID",
-     *     description="Devuelve la información de una venta específica",
+     *     path="/sales/{saleId}",
+     *     summary="Get a sale by ID",
+     *     description="Retrieve a sale by its ID",
      *     operationId="getSaleById",
+     *     tags={"Sales"},
      *     @OA\Parameter(
      *         name="saleId",
      *         in="path",
-     *         description="ID de la venta",
      *         required=true,
-     *         @OA\Schema(
-     *             type="string",
-     *             format="uuid",
-     *             example="550e8400-e29b-41d4-a716-446655440000"
-     *         )
+     *         description="ID of the sale to retrieve",
+     *         @OA\Schema(type="string", format="uuid")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Información de la venta",
+     *         description="Sale retrieved successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="id", type="string", format="uuid", example="550e8400-e29b-41d4-a716-446655440000"),
-     *             @OA\Property(property="sale_date", type="string", format="date", example="2024-01-14"),
-     *             @OA\Property(property="sale_details", type="array",
+     *             @OA\Property(property="id", type="string", format="uuid"),
+     *             @OA\Property(property="sale_date", type="string", format="date"),
+     *             @OA\Property(property="total_amount", type="number", format="float"),
+     *             @OA\Property(property="sale_status_id", type="string", format="uuid"),
+     *             @OA\Property(
+     *                 property="sale_details",
+     *                 type="array",
      *                 @OA\Items(
-     *                     @OA\Property(property="product_id", type="string", example="550e8400-e29b-41d4-a716-446655440000"),
-     *                     @OA\Property(property="quantity", type="integer", example=2),
-     *                     @OA\Property(property="unit_price", type="number", format="float", example=100.50),
-     *                     @OA\Property(property="subtotal", type="number", format="float", example=201.00)
+     *                     type="object",
+     *                     @OA\Property(property="product_id", type="string", format="uuid"),
+     *                     @OA\Property(property="quantity", type="integer"),
+     *                     @OA\Property(property="unit_price", type="number", format="float"),
+     *                     @OA\Property(property="subtotal", type="number", format="float")
      *                 )
      *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Venta no encontrada",
+     *         description="Sale not found",
      *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string", example="Venta no encontrada")
+     *             @OA\Property(property="error", type="string")
      *         )
      *     )
      * )
-     *
-     * @param string $saleId El ID de la venta a buscar.
-     * @return JsonResponse La respuesta JSON con la información de la venta o un mensaje de error.
      */
     public function getSaleById(string $saleId): JsonResponse
     {
@@ -199,193 +181,173 @@ class SaleController
         return response()->json($sale);
     }
 
-    /**
-     * Obtiene todas las ventas.
-     *
-     * Este endpoint devuelve una lista de todas las ventas registradas en el sistema.
-     *
-     * @OA\Get(
-     *     path="/api/sales",
-     *     tags={"Sales"},
-     *     summary="Obtener todas las ventas",
-     *     description="Devuelve una lista de todas las ventas registradas en el sistema",
-     *     operationId="getAllSales",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Lista de ventas",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 type="object",
-     *                 @OA\Property(property="id", type="string", format="uuid", example="550e8400-e29b-41d4-a716-446655440000"),
-     *                 @OA\Property(property="sale_date", type="string", format="date", example="2024-01-14"),
-     *                 @OA\Property(property="sale_details", type="array",
-     *                     @OA\Items(
-     *                         @OA\Property(property="product_id", type="string", example="550e8400-e29b-41d4-a716-446655440000"),
-     *                         @OA\Property(property="quantity", type="integer", example=2),
-     *                         @OA\Property(property="unit_price", type="number", format="float", example=100.50),
-     *                         @OA\Property(property="subtotal", type="number", format="float", example=201.00)
-     *                     )
-     *                 )
-     *             )
-     *         )
-     *     )
-     * )
-     *
-     * @return JsonResponse La respuesta JSON con la lista de ventas.
-     */
-    public function getAllSales(): JsonResponse
-    {
-        return response()->json(
-            $this->saleService->getAllSales()
-        );
-    }
+   /**
+    * @OA\Get(
+    *     path="/api/sales",
+    *     tags={"Sales"},
+    *     summary="Obtener todas las ventas",
+    *     description="Devuelve una lista de todas las ventas registradas",
+    *     @OA\Response(
+    *         response=200,
+    *         description="Lista de ventas",
+    *         @OA\JsonContent(
+    *             type="array",
+    *             @OA\Items(
+    *                 type="object",
+    *                 @OA\Property(property="id", type="string", format="uuid"),
+    *                 @OA\Property(property="sale_date", type="string", format="date"),
+    *                 @OA\Property(property="total_amount", type="number", format="float"),
+    *                 @OA\Property(property="sale_status_id", type="string", format="uuid"),
+    *                 @OA\Property(
+    *                     property="sale_details",
+    *                     type="array",
+    *                     @OA\Items(
+    *                         type="object",
+    *                         @OA\Property(property="product_id", type="string", format="uuid"),
+    *                         @OA\Property(property="quantity", type="integer"),
+    *                         @OA\Property(property="unit_price", type="number", format="float"),
+    *                         @OA\Property(property="subtotal", type="number", format="float")
+    *                     )
+    *                 )
+    *             )
+    *         )
+    *     )
+    * )
+    *
+    * @return JsonResponse La respuesta JSON con la lista de ventas.
+    */
+   public function getAllSales(): JsonResponse
+   {
+       $sales = $this->saleService->getAllSales();
+       return response()->json($sales);
+   }
+
 
     /**
-     * Actualiza el estado de una venta.
-     *
-     * Este endpoint permite la actualización del estado de una venta existente en el sistema.
-     * Se validan los datos de entrada y se devuelve una respuesta con el resultado de la operación.
-     *
      * @OA\Put(
-     *     path="/api/sales/{saleId}",
-     *     tags={"Sales"},
-     *     summary="Actualizar estado de una venta",
-     *     description="Actualiza el estado de una venta existente en el sistema",
+     *     path="/sales/{saleId}",
+     *     summary="Update sale status",
+     *     description="Update the status of a sale",
      *     operationId="updateSale",
+     *     tags={"Sales"},
      *     @OA\Parameter(
      *         name="saleId",
      *         in="path",
-     *         description="ID de la venta",
      *         required=true,
-     *         @OA\Schema(
-     *             type="string",
-     *             format="uuid",
-     *             example="550e8400-e29b-41d4-a716-446655440000"
-     *         )
+     *         description="ID of the sale to update",
+     *         @OA\Schema(type="string", format="uuid")
      *     ),
-     * @OA\RequestBody(
+     *     @OA\RequestBody(
      *         required=true,
-     *         description="Datos del estado de la venta a actualizar",
+     *         description="Sale status data",
      *         @OA\JsonContent(
-     *             required={"sale_status_id"},
-     *             @OA\Property(property="sale_status_id", type="string", format="uuid", example="550e8400-e29b-41d4-a716-446655440000")
+     *             required={"sale_status_code"},
+     *             @OA\Property(property="sale_status_code", type="string", example="completed")
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Venta actualizada exitosamente",
+     *         description="Sale updated successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Venta actualizada exitosamente")
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="errors", type="object")
      *         )
      *     ),
      *     @OA\Response(
      *         response=400,
-     *         description="Error de validación",
+     *         description="Domain error",
      *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string", example="El campo sale_status_id es obligatorio.")
+     *             @OA\Property(property="error", type="string")
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Venta no encontrada",
+     *         description="Sale not found",
      *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string", example="Venta no encontrada")
+     *             @OA\Property(property="error", type="string")
      *         )
      *     ),
      *     @OA\Response(
      *         response=500,
-     *         description="Error interno del servidor",
+     *         description="Internal server error",
      *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string", example="Error al actualizar la venta")
+     *             @OA\Property(property="error", type="string")
      *         )
      *     )
      * )
-     *
-     * @param Request $request La solicitud HTTP que contiene los datos actualizados de la venta.
-     * @param string $saleId El ID de la venta a actualizar.
-     * @return JsonResponse La respuesta JSON con el resultado de la operación o un mensaje de error.
      */
     public function updateSale(Request $request, string $saleId): JsonResponse
     {
         try {
-            $validatedData = $request->validate([
-                'sale_status_id' => 'required|string|exists:sale_statuses,id',
+            $validated = $request->validate([
+                'sale_status_code' => 'required|string'
             ]);
 
-            $updated = $this->saleService->updateSale($saleId, $validatedData);
+            $updated = $this->saleService->updateSaleStatus(
+                $saleId,
+                $validated['sale_status_code']
+            );
 
             if (!$updated) {
                 return response()->json(['error' => 'Venta no encontrada'], 404);
             }
 
-            return response()->json(['message' => 'Venta actualizada exitosamente']);
+            return response()->json(['message' => 'Venta actualizada correctamente']);
 
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->errors()], 422);
-        } catch (\Exception $e) {
-            Log::error('Error al actualizar la venta: ' . $e->getMessage());
-            return response()->json(['error' => 'Error al actualizar la venta'], 500);
+            return response()->json(['errors' => $e->errors()], 422);
+
+        } catch (\DomainException $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+
+        } catch (\Throwable $e) {
+            Log::error('Update sale error', ['exception' => $e]);
+            return response()->json(['error' => 'Error interno al actualizar la venta'], 500);
         }
     }
 
     /**
-     * Elimina una venta.
-     *
-     * Este endpoint permite la eliminación de una venta del sistema.
-     * Si la venta no existe, se devuelve un mensaje de error.
-     *
      * @OA\Delete(
-     *     path="/api/sales/{saleId}",
-     *     tags={"Sales"},
-     *     summary="Eliminar una venta",
-     *     description="Elimina una venta del sistema",
+     *     path="/sales/{saleId}",
+     *     summary="Delete a sale",
+     *     description="Delete a sale by its ID",
      *     operationId="deleteSale",
+     *     tags={"Sales"},
      *     @OA\Parameter(
      *         name="saleId",
      *         in="path",
-     *         description="ID de la venta",
      *         required=true,
-     *         @OA\Schema(
-     *             type="string",
-     *             format="uuid",
-     *             example="550e8400-e29b-41d4-a716-446655440000"
-     *         )
+     *         description="ID of the sale to delete",
+     *         @OA\Schema(type="string", format="uuid")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Venta eliminada exitosamente",
+     *         description="Sale deleted successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Venta eliminada exitosamente")
+     *             @OA\Property(property="message", type="string")
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Venta no encontrada",
+     *         description="Sale not found",
      *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string", example="Venta no encontrada")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Error interno del servidor",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string", example="Error al eliminar la venta")
+     *             @OA\Property(property="error", type="string")
      *         )
      *     )
      * )
-     *
-     * @param string $saleId El ID de la venta a eliminar.
-     * @return JsonResponse La respuesta JSON con el resultado de la operación o un mensaje de error.
      */
     public function deleteSale(string $saleId): JsonResponse
     {
-        $deleted = $this->saleService->deleteSale($saleId);
-
-        if (!$deleted) {
+        if (!$this->saleService->deleteSale($saleId)) {
             return response()->json(['error' => 'Venta no encontrada'], 404);
         }
 
-        return response()->json(['message' => 'Venta eliminada exitosamente']);
+        return response()->json(['message' => 'Venta eliminada correctamente']);
     }
 }
