@@ -957,7 +957,71 @@
                 }
             }
         },
-        "/sales": {
+        "/api/sales": {
+            "get": {
+                "tags": [
+                    "Sales"
+                ],
+                "summary": "Obtener todas las ventas",
+                "description": "Devuelve una lista de todas las ventas registradas",
+                "operationId": "27f802622a6769b643c4e6c065905ed1",
+                "responses": {
+                    "200": {
+                        "description": "Lista de ventas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "sale_date": {
+                                                "type": "string",
+                                                "format": "date"
+                                            },
+                                            "total_amount": {
+                                                "type": "number",
+                                                "format": "float"
+                                            },
+                                            "sale_status_id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "sale_details": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "product_id": {
+                                                            "type": "string",
+                                                            "format": "uuid"
+                                                        },
+                                                        "quantity": {
+                                                            "type": "integer"
+                                                        },
+                                                        "unit_price": {
+                                                            "type": "number",
+                                                            "format": "float"
+                                                        },
+                                                        "subtotal": {
+                                                            "type": "number",
+                                                            "format": "float"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "Sales"
@@ -1120,7 +1184,7 @@
                 }
             }
         },
-        "/sales/{saleId}": {
+        "/api/sales/{saleId}": {
             "get": {
                 "tags": [
                     "Sales"
@@ -1372,72 +1436,6 @@
                                         }
                                     },
                                     "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/sales": {
-            "get": {
-                "tags": [
-                    "Sales"
-                ],
-                "summary": "Obtener todas las ventas",
-                "description": "Devuelve una lista de todas las ventas registradas",
-                "operationId": "27f802622a6769b643c4e6c065905ed1",
-                "responses": {
-                    "200": {
-                        "description": "Lista de ventas",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "properties": {
-                                            "id": {
-                                                "type": "string",
-                                                "format": "uuid"
-                                            },
-                                            "sale_date": {
-                                                "type": "string",
-                                                "format": "date"
-                                            },
-                                            "total_amount": {
-                                                "type": "number",
-                                                "format": "float"
-                                            },
-                                            "sale_status_id": {
-                                                "type": "string",
-                                                "format": "uuid"
-                                            },
-                                            "sale_details": {
-                                                "type": "array",
-                                                "items": {
-                                                    "properties": {
-                                                        "product_id": {
-                                                            "type": "string",
-                                                            "format": "uuid"
-                                                        },
-                                                        "quantity": {
-                                                            "type": "integer"
-                                                        },
-                                                        "unit_price": {
-                                                            "type": "number",
-                                                            "format": "float"
-                                                        },
-                                                        "subtotal": {
-                                                            "type": "number",
-                                                            "format": "float"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                }
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
                                 }
                             }
                         }
