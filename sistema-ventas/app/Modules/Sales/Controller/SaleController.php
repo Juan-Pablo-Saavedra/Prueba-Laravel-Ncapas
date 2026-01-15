@@ -23,7 +23,7 @@ class SaleController
 
     /**
      * @OA\Post(
-     *     path="/sales",
+     *     path="/api/sales",
      *     summary="Create a new sale",
      *     description="Create a new sale with the provided details",
      *     operationId="createSale",
@@ -127,7 +127,7 @@ class SaleController
 
     /**
      * @OA\Get(
-     *     path="/sales/{saleId}",
+     *     path="/api/sales/{saleId}",
      *     summary="Get a sale by ID",
      *     description="Retrieve a sale by its ID",
      *     operationId="getSaleById",
@@ -225,7 +225,7 @@ class SaleController
 
     /**
      * @OA\Put(
-     *     path="/sales/{saleId}",
+     *     path="/api/sales/{saleId}",
      *     summary="Update sale status",
      *     description="Update the status of a sale",
      *     operationId="updateSale",
@@ -314,7 +314,7 @@ class SaleController
 
     /**
      * @OA\Delete(
-     *     path="/sales/{saleId}",
+     *     path="/api/sales/{saleId}",
      *     summary="Delete a sale",
      *     description="Delete a sale by its ID",
      *     operationId="deleteSale",

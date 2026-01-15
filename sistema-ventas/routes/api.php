@@ -31,11 +31,12 @@ Route::prefix('products')->group(function () {
 // Sale Routes
 Route::prefix('sales')->group(function () {
     Route::post('/', 'App\Modules\Sales\Controller\SaleController@createSale');
-    Route::get('/{saleId}', 'App\Modules\Sales\Controller\SaleController@getSaleById');
     Route::get('/', 'App\Modules\Sales\Controller\SaleController@getAllSales');
+    Route::get('/{saleId}', 'App\Modules\Sales\Controller\SaleController@getSaleById');
     Route::put('/{saleId}', 'App\Modules\Sales\Controller\SaleController@updateSale');
     Route::delete('/{saleId}', 'App\Modules\Sales\Controller\SaleController@deleteSale');
 });
+
 
 // Product Category Routes
 Route::prefix('product-categories')->group(function () {
